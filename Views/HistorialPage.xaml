@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:NotasRapidas.Models"
+             xmlns:viewmodels="clr-namespace:NotasRapidas.ViewModels"
+             x:Class="NotasRapidas.Views.HistorialPage"
+             x:DataType="viewmodels:HistorialViewModel"
+             Title="Historial">
+
+    <Grid RowDefinitions="Auto,Auto,*"
+          Padding="16,12"
+          RowSpacing="12">
+
+        <!-- Encabezado -->
+        <Border Grid.Row="0"
+                StrokeShape="RoundRectangle 12"
+                Padding="18,14"
+                BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}">
+            <VerticalStackLayout Spacing="4">
+                <Label Text="🕘 Historial"
+                       FontAttributes="Bold"
+                       FontSize="22"
+                       TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                       SemanticProperties.HeadingLevel="Level1" />
+                <Label Text="Cada vez que creas, editas o eliminas una nota queda registrado aquí."
+                       FontSize="12"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource TextSecondaryDark}}" />
+            </VerticalStackLayout>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+            <Label Grid.Column="0"
+                   Text="{Binding TituloLista}"
+                   FontAttributes="Bold"
+                   FontSize="16"
+                   VerticalOptions="Center"
+                   TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                   SemanticProperties.HeadingLevel="Level2" />
+            <Button Grid.Column="1"
+                    Text="Limpiar"
+                    Style="{StaticResource BotonSecundario}"
+                    Command="{Binding LimpiarHistorialCommand}"
+                    SemanticProperties.Description="Borrar todos los registros del historial" />
+        </Grid>
+
+        <!-- Lista del historial -->
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding Registros}">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Historial">
+                    <Border Padding="14"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 10"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   Text="{Binding Icono}"
+                                   FontSize="24"
+                                   VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                <Label Text="{Binding Descripcion}"
+                                       FontAttributes="Bold"
+                                       FontSize="15" />
+                                <Label Text="{Binding TituloNota, StringFormat='«{0}»'}"
+                                       FontSize="13"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="1" />
+                                <Label Text="{Binding Fecha, StringFormat='{0:dd/MM/yyyy HH:mm}'}"
+                                       FontSize="12"
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Label Grid.Row="2"
+               Text="Aún no hay acciones registradas."
+               IsVisible="{Binding MostrarVacio}"
+               HorizontalTextAlignment="Center"
+               VerticalOptions="Start"
+               Margin="0,16"
+               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+    </Grid>
+</ContentPage>

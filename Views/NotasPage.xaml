@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:NotasRapidas.Models"
+             xmlns:viewmodels="clr-namespace:NotasRapidas.ViewModels"
+             x:Class="NotasRapidas.Views.NotasPage"
+             x:DataType="viewmodels:NotasViewModel"
+             Title="Notas">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*"
+          Padding="16,12"
+          RowSpacing="12">
+
+        <!-- Encabezado -->
+        <Border Grid.Row="0"
+                StrokeShape="RoundRectangle 12"
+                Padding="18,14"
+                BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}">
+            <VerticalStackLayout Spacing="4">
+                <Label Text="📝 Notas rápidas"
+                       FontAttributes="Bold"
+                       FontSize="22"
+                       TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                       SemanticProperties.HeadingLevel="Level1" />
+                <Label Text="Crea, busca y organiza tus ideas."
+                       FontSize="12"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource TextSecondaryDark}}" />
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Búsqueda por título: filtra mientras se escribe -->
+        <Border Grid.Row="1"
+                StrokeShape="RoundRectangle 8"
+                BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}">
+            <SearchBar Placeholder="Buscar por título..."
+                       Text="{Binding TextoBusqueda, Mode=TwoWay}"
+                       SemanticProperties.Description="Buscar notas por título" />
+        </Border>
+
+        <Button Grid.Row="2"
+                Text="＋ Nueva nota"
+                Style="{StaticResource BotonPrimario}"
+                Command="{Binding NuevaNotaCommand}"
+                SemanticProperties.Description="Crear una nota nueva" />
+
+        <Label Grid.Row="3"
+               Text="{Binding TituloLista}"
+               FontAttributes="Bold"
+               FontSize="18"
+               TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+               SemanticProperties.HeadingLevel="Level2" />
+
+        <!-- Lista de notas -->
+        <CollectionView Grid.Row="4"
+                        ItemsSource="{Binding Notas}">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Nota">
+                    <Border Padding="14"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 10"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="{Binding Titulo}"
+                                   FontAttributes="Bold"
+                                   FontSize="16"
+                                   LineBreakMode="TailTruncation"
+                                   MaxLines="1" />
+                            <Label Text="{Binding Contenido}"
+                                   FontSize="13"
+                                   LineBreakMode="TailTruncation"
+                                   MaxLines="2"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" />
+                            <Label Text="{Binding FechaModificacion, StringFormat='Modificada: {0:dd/MM/yyyy HH:mm}'}"
+                                   FontSize="12"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+
+                            <!-- Los comandos viven en el ViewModel de la página, no en Nota:
+                                 se llega a ellos con RelativeSource. x:DataType="{x:Null}"
+                                 desactiva el enlace compilado solo en estos dos botones. -->
+                            <HorizontalStackLayout Spacing="10" Margin="0,4,0,0">
+                                <Button Text="Editar"
+                                        Style="{StaticResource BotonSecundario}"
+                                        x:DataType="{x:Null}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:NotasViewModel}}, Path=EditarNotaCommand}"
+                                        CommandParameter="{Binding}"
+                                        SemanticProperties.Description="Editar esta nota" />
+                                <Button Text="Eliminar"
+                                        Style="{StaticResource BotonPeligro}"
+                                        x:DataType="{x:Null}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:NotasViewModel}}, Path=EliminarNotaCommand}"
+                                        CommandParameter="{Binding}"
+                                        SemanticProperties.Description="Eliminar esta nota" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Mensaje cuando no hay notas (o la búsqueda no encontró nada) -->
+        <Label Grid.Row="4"
+               Text="{Binding MensajeVacio}"
+               IsVisible="{Binding MostrarVacio}"
+               HorizontalTextAlignment="Center"
+               VerticalOptions="Start"
+               Margin="0,16"
+               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+    </Grid>
+</ContentPage>

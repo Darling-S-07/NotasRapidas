@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:NotasRapidas.ViewModels"
+             x:Class="NotasRapidas.Views.NotaDetallePage"
+             x:DataType="viewmodels:NotaDetalleViewModel"
+             Title="{Binding TituloPagina}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,16" Spacing="14">
+
+            <!-- Título -->
+            <VerticalStackLayout Spacing="4">
+                <Label Text="Título *" FontAttributes="Bold" FontSize="13" />
+                <Border StrokeShape="RoundRectangle 8"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}">
+                    <Entry Text="{Binding Titulo, Mode=TwoWay}"
+                           Placeholder="Título de la nota"
+                           MaxLength="100"
+                           ClearButtonVisibility="WhileEditing"
+                           SemanticProperties.Description="Título de la nota" />
+                </Border>
+
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Grid.Column="0"
+                           Text="{Binding ErrorTitulo}"
+                           IsVisible="{Binding MostrarErrorTitulo}"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light={StaticResource Danger}, Dark={StaticResource DangerDark}}" />
+                    <Label Grid.Column="1"
+                           Text="{Binding ContadorTitulo}"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                </Grid>
+            </VerticalStackLayout>
+
+            <!-- Contenido -->
+            <VerticalStackLayout Spacing="4">
+                <Label Text="Contenido" FontAttributes="Bold" FontSize="13" />
+                <Border StrokeShape="RoundRectangle 8"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}">
+                    <Editor Text="{Binding Contenido, Mode=TwoWay}"
+                            Placeholder="Escribe tu nota aquí..."
+                            HeightRequest="240"
+                            AutoSize="Disabled"
+                            SemanticProperties.Description="Contenido de la nota" />
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- Acciones -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,8,0,0">
+                <Button Grid.Column="0"
+                        Text="Guardar"
+                        Style="{StaticResource BotonPrimario}"
+                        Command="{Binding GuardarCommand}"
+                        SemanticProperties.Description="Guardar la nota" />
+                <Button Grid.Column="1"
+                        Text="Cancelar"
+                        Style="{StaticResource BotonSecundario}"
+                        Command="{Binding CancelarCommand}"
+                        SemanticProperties.Description="Volver sin guardar" />
+            </Grid>
+
+            <!-- Solo al editar una nota existente -->
+            <Button Text="Eliminar nota"
+                    Style="{StaticResource BotonPeligro}"
+                    IsVisible="{Binding EsEdicion}"
+                    Command="{Binding EliminarCommand}"
+                    SemanticProperties.Description="Eliminar esta nota" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
